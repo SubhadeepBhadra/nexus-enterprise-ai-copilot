@@ -116,6 +116,8 @@ Using the bundled lightweight Node.js server:
 .\start.bat
 # or in PowerShell:
 .\start.ps1
+# or in CMD:
+start.bat
 ```
 
 Or run directly with Node:
