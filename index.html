@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Enterprise AI Copilot</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- =======================================================================
+       App Header (Top Navigation Bar)
+       ======================================================================= -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">NEXUS <span>COPILOT</span></div>
+      </div>
+      <span class="env-pill">Prod • us-east-1</span>
+    </div>
+
+    <!-- Center Search Trigger -->
+    <div class="header-center">
+      <button class="global-search-btn" id="globalSearchBtn">
+        <span class="search-placeholder">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Search company knowledge, agents, or policies...
+        </span>
+        <span class="kbd-shortcut">Ctrl+K</span>
+      </button>
+    </div>
+
+    <!-- Right User Persona & Notifications -->
+    <div class="header-actions">
+      <!-- Pending Approvals Bell Icon -->
+      <button class="approval-bell-btn" id="approvalBellBtn" title="Pending Authorizations">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="bell-badge" id="approvalBellBadge" style="display: none;">0</span>
+      </button>
+
+      <!-- RBAC Persona Switcher Dropdown -->
+      <div class="role-switcher-container">
+        <div class="user-avatar-badge" id="userAvatarBadge">
+          <span id="userAvatarInitials">SB</span>
+        </div>
+        <div class="user-info">
+          <span class="user-name" id="userName">Subhadeep Bhadra</span>
+          <span class="user-role-title" id="userRoleTitle">Chief Information Officer</span>
+        </div>
+        <select class="role-select" id="roleSelect" title="Switch User Role Persona">
+          <option value="cio_admin">Subhadeep Bhadra (CIO / Admin • Level 5)</option>
+          <option value="hr_director">Marcus Vance (VP People • Level 4 HR)</option>
+          <option value="finance_controller">Sophia Lin (Finance Controller • Level 4 Fin)</option>
+          <option value="staff_engineer">Alex Rivera (Staff Engineer • Level 3 Tech)</option>
+          <option value="marketing_specialist">Maya Patel (Marketing • Level 2 Internal)</option>
+          <option value="contractor">Lucas Thorne (Auditor Contractor • Level 1 Public)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       Main Container (Sidebar + Views)
+       ======================================================================= -->
+  <div class="app-container">
+    <!-- Left Navigation Sidebar -->
+    <aside class="app-sidebar">
+      <div>
+        <div class="sidebar-nav">
+          <div class="nav-section-title">Core Operations</div>
+          
+          <a class="nav-item active" data-tab="chat">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span class="sidebar-text">Enterprise Copilot</span>
+            </div>
+          </a>
+
+          <a class="nav-item" data-tab="agents">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span class="sidebar-text">AI Agents & Workflows</span>
+            </div>
+          </a>
+
+          <a class="nav-item" data-tab="insights">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+              <span class="sidebar-text">Business Insights & KPIs</span>
+            </div>
+          </a>
+
+          <div class="nav-section-title">Governance & Data</div>
+
+          <a class="nav-item" data-tab="kb">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+              <span class="sidebar-text">Company Knowledge Base</span>
+            </div>
+          </a>
+
+          <a class="nav-item" data-tab="approvals">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span class="sidebar-text">HITL Approvals</span>
+            </div>
+            <span class="nav-badge badge-amber" id="approvalsNavBadge" style="display: none;">0 Pending</span>
+          </a>
+
+          <a class="nav-item" data-tab="audit">
+            <div class="nav-item-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span class="sidebar-text">Security & Audit Ledger</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sidebar Security Clearance Card -->
+      <div class="sidebar-footer">
+        <div class="security-clearance-card">
+          <div class="clearance-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>Active Clearance</span>
+          </div>
+          <span class="clearance-level-text" id="sidebarClearanceBadge">Executive / Level 5</span>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;" id="sidebarClearanceDesc">
+            All-Access Permissions Enabled
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport (Houses all dynamic views) -->
+    <main class="main-viewport">
+      
+      <!-- =====================================================================
+           VIEW 1: Enterprise Copilot Chat & Agent Reasoning
+           ===================================================================== -->
+      <section class="view-panel active" id="view-chat">
+        <div class="copilot-workspace">
+          
+          <!-- Left: Chat History Sidebar -->
+          <div class="copilot-chat-sidebar" id="copilotChatSidebar">
+            <div class="chat-sidebar-header">
+              <button class="btn-new-chat" id="btnNewChat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>New Chat</span>
+              </button>
+              <button class="btn-toggle-sidebar" id="btnMinimizeSidebar" title="Minimize Chat History">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="9" y1="3" x2="9" y2="21"/>
+                  <polyline points="15 9 12 12 15 15"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="chat-history-label-row">
+              <span class="chat-history-title">Chat History</span>
+              <span class="chat-history-count" id="chatSessionCount">3</span>
+            </div>
+
+            <!-- List of Chat Sessions -->
+            <div class="chat-sessions-list" id="chatSessionsList">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Chat Sidebar Footer -->
+            <div class="chat-sidebar-footer">
+              <button class="btn-clear-all-chats" id="btnClearAllChats" title="Clear all saved conversation history">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Clear All History</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Main Chat Stage -->
+          <div class="copilot-chat-main">
+            <!-- Chat Action Header with Active Session Info & Sidebar Toggle -->
+            <div class="chat-header-bar">
+              <div class="chat-header-left">
+                <button class="btn-toggle-sidebar" id="btnToggleSidebar" title="Toggle Chat History Sidebar (Expand / Minimize)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                  </svg>
+                </button>
+                <div class="chat-session-info">
+                  <span class="chat-status-dot"></span>
+                  <span id="activeSessionTitle" style="font-weight: 600; color: var(--text-main);">Enterprise Copilot Workspace</span>
+                  <span style="color: var(--text-tertiary);">•</span>
+                  <span style="font-size: 11.5px; color: var(--text-muted);">Autonomous Orchestrator</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-messages-container" id="chatMessages">
+              <!-- Hero Welcome Card or conversation messages -->
+            </div>
+
+            <!-- Bottom Chat Input Bar -->
+            <div class="chat-input-wrapper">
+              <div class="input-row">
+                <textarea class="chat-textarea" id="chatInput" placeholder="Ask anything, run an agent workflow, or query business data..." rows="1"></textarea>
+                <button class="send-btn" id="sendBtn" title="Send message">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="input-footer">
+                <span class="clearance-notice-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  Dynamic ACL enforcement enabled • PII masking active
+                </span>
+                <span>Press <strong>Enter</strong> to send • <strong>Shift+Enter</strong> for newline</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 2: AI Agents & Automated Workflows
+           ===================================================================== -->
+      <section class="view-panel" id="view-agents">
+        <div class="view-header">
+          <h2 class="view-title">Enterprise AI Agents & Orchestration</h2>
+          <p class="view-subtitle">Autonomous specialist agents cooperating in ReAct loops with safety guardrails and Human-in-the-Loop gates.</p>
+        </div>
+
+        <!-- 4 Specialist Agent Cards -->
+        <div class="agent-grid">
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-icon blue">🔍</div>
+              <div>
+                <div class="agent-name">Knowledge Retrieval Agent</div>
+                <span class="agent-status-pill">Active • 99.4% Precision</span>
+              </div>
+            </div>
+            <p class="agent-desc">Performs semantic vector search across internal docs, verifies dynamic ACL permissions, and anchors answers with clickable citations.</p>
+            <div class="agent-metrics-row">
+              <span>Avg Latency: <strong>268ms</strong></span>
+              <span>Index Size: <strong>22 Docs</strong></span>
+            </div>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-icon purple">⚡</div>
+              <div>
+                <div class="agent-name">Workflow Automation Agent</div>
+                <span class="agent-status-pill">Active • 24 Connectors</span>
+              </div>
+            </div>
+            <p class="agent-desc">Coordinates multi-system actions across AWS, Okta, Jira, and GitHub. Dispatches tasks and tracks asynchronous execution outcomes.</p>
+            <div class="agent-metrics-row">
+              <span>Completed Today: <strong>48 Tasks</strong></span>
+              <span>Error Rate: <strong>0.0%</strong></span>
+            </div>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-card-header">
+              <div class="agent-icon amber">📊</div>
+              <div>
+                <div class="agent-name">Business Intelligence Agent</div>
+                <span class="agent-status-pill">Active • Data Marts Sync</span>
+              </div>
+            </div>
+            <p class="agent-desc">Aggregates enterprise data warehouses, synthesizes ARR and budget variances, and generates executive visual chart specifications.</p>
+            <div class="agent-metrics-row">
+              <span>Queries Handled: <strong>340</strong></span>
+              <span>Data Freshness: <strong>Real-time</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Automated Workflow Templates Table -->
+        <div class="workflow-section-title">
+          <span>Enterprise Workflow Catalog & Task Runbooks</span>
+          <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">Click "Launch" to dispatch via agent</span>
+        </div>
+
+        <div class="workflow-table-card">
+          <table class="enterprise-table">
+            <thead>
+              <tr>
+                <th>Workflow Name & Scope</th>
+                <th>Department</th>
+                <th>Risk Level</th>
+                <th>Cost / Blast Radius</th>
+                <th>Governance Policy</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="workflowsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 3: Business Insights & KPI Analytics Hub
+           ===================================================================== -->
+      <section class="view-panel" id="view-insights">
+        <div class="view-header">
+          <h2 class="view-title">Executive Business Insights & KPI Telemetry</h2>
+          <p class="view-subtitle">Real-time enterprise metrics, departmental adoption analytics, and strategic executive synthesis.</p>
+        </div>
+
+        <!-- 4 Metric KPI Cards -->
+        <div class="metrics-overview-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Queries Handled</div>
+            <div class="kpi-value">1,420</div>
+            <div class="kpi-sub">↑ 18.4% from last week</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">RAG Retrieval Precision</div>
+            <div class="kpi-value">99.4%</div>
+            <div class="kpi-sub">● Zero hallucination alerts</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">ACL Clearances Enforced</div>
+            <div class="kpi-value">38 Blocks</div>
+            <div class="kpi-sub" style="color: var(--amber-700);">🛡️ Leakage prevented</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Employee Hours Saved</div>
+            <div class="kpi-value">1,240 hrs</div>
+            <div class="kpi-sub">~ $94,000 workforce value</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid (Pure SVG) -->
+        <div class="charts-row-grid">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">Weekly Enterprise Copilot Query Volume</div>
+              <span class="badge-risk low">Live Telemetry</span>
+            </div>
+            <div id="trendChartContainer"></div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">Department Adoption Distribution</div>
+              <span style="font-size: 11px; color: var(--text-muted);">By Query Share</span>
+            </div>
+            <div id="deptBarsContainer"></div>
+          </div>
+        </div>
+
+        <!-- Strategic Brief Generator Banner -->
+        <div class="insight-generator-card">
+          <div class="insight-text-col">
+            <h3>Automated Executive Briefing Generator</h3>
+            <p>Generate an executive synthesis of Q3 FY2026 audited ARR, gross margins, EBITDA, and cloud compute cost variances.</p>
+          </div>
+          <button class="btn-generate-insight" id="btnGenerateQ3Brief">
+            Generate Q3 Executive Brief
+          </button>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 4: Enterprise Knowledge Base & Document Ingestion
+           ===================================================================== -->
+      <section class="view-panel" id="view-kb">
+        <div class="view-header">
+          <h2 class="view-title">Company Knowledge Base & Vector Index</h2>
+          <p class="view-subtitle">Manage corporate documentation, view role clearance statuses, and ingest new operational policies.</p>
+        </div>
+
+        <!-- Action Bar: Search, Filter, Ingest Button -->
+        <div class="kb-action-bar">
+          <input type="text" class="kb-search-input" id="kbSearchInput" placeholder="Filter documents by title, ID, or tag...">
+          
+          <div class="kb-filters">
+            <select class="filter-select" id="kbDeptFilter">
+              <option value="ALL">All Departments</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Legal & Audit">Legal & Audit</option>
+              <option value="Product & Strategy">Product & Strategy</option>
+              <option value="Sales & Go-To-Market">Sales & Go-To-Market</option>
+              <option value="Operations">Operations</option>
+            </select>
+
+            <button class="btn-primary" id="btnOpenIngestModal">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Ingest Document
+            </button>
+          </div>
+        </div>
+
+        <!-- Knowledge Base Documents Table -->
+        <div class="workflow-table-card">
+          <table class="enterprise-table">
+            <thead>
+              <tr>
+                <th>Document ID</th>
+                <th>Title & Summary</th>
+                <th>Department</th>
+                <th>Clearance Tier</th>
+                <th>Your Access</th>
+                <th>Updated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="kbDocsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 5: Human-in-the-Loop Approvals & Governance Center
+           ===================================================================== -->
+      <section class="view-panel" id="view-approvals">
+        <div class="view-header">
+          <h2 class="view-title">Human-in-the-Loop (HITL) Governance Center</h2>
+          <p class="view-subtitle">Review, inspect parameters, and authorize high-risk AI agent actions before changes hit production systems.</p>
+        </div>
+
+        <div id="approvalsListContainer">
+          <!-- Populated by pending approvals or empty state -->
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 6: Security & Audit Ledger
+           ===================================================================== -->
+      <section class="view-panel" id="view-audit">
+        <div class="view-header">
+          <h2 class="view-title">Enterprise Security & Compliance Audit Ledger</h2>
+          <p class="view-subtitle">Immutable audit trail of all employee queries, agent tool calls, ACL policy blocks, and human approvals.</p>
+        </div>
+
+        <div class="audit-action-bar">
+          <div class="audit-filter-group">
+            <input type="text" class="kb-search-input" id="auditSearchInput" placeholder="Search by user, query, or audit ID...">
+            <select class="filter-select" id="auditRiskFilter">
+              <option value="ALL">All Risk Levels</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary" id="btnExportAuditCsv">Export CSV</button>
+            <button class="btn-secondary" id="btnExportAuditJson">Export JSON</button>
+          </div>
+        </div>
+
+        <div class="workflow-table-card">
+          <table class="enterprise-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Employee / Role</th>
+                <th>Action Type</th>
+                <th>Query / Target</th>
+                <th>Risk</th>
+                <th>Status</th>
+                <th>Latency</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =======================================================================
+       Sliding Citation Drawer (Deep-Dive into Original Document Sources)
+       ======================================================================= -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="citation-drawer" id="citationDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawerTitle">Document Details</div>
+      <button class="drawer-close-btn" id="drawerCloseBtn" title="Close Drawer">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-meta-box" id="drawerMeta"></div>
+      <div class="drawer-content-box" id="drawerContent"></div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       Document Ingestion Modal
+       ======================================================================= -->
+  <div class="modal-backdrop" id="ingestModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <strong style="font-size: 16px; color: var(--text-main);">Ingest New Enterprise Document</strong>
+        <button class="drawer-close-btn" id="btnCloseIngestModal">✕</button>
+      </div>
+      <form id="ingestDocForm">
+        <div class="modal-body">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">Document ID</label>
+              <input type="text" class="form-control" id="ingestDocId" placeholder="e.g. DOC-ENG-004" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select class="form-control" id="ingestDocDept">
+                <option value="Engineering">Engineering</option>
+                <option value="Finance & Accounting">Finance & Accounting</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Legal & Audit">Legal & Audit</option>
+                <option value="Product & Strategy">Product & Strategy</option>
+                <option value="Operations">Operations</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Document Title</label>
+            <input type="text" class="form-control" id="ingestDocTitle" placeholder="e.g. Multi-Cloud Observability Architecture" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">Clearance Tier (ACL)</label>
+              <select class="form-control" id="ingestDocClearance">
+                <option value="Public">Public (All employees & contractors)</option>
+                <option value="Internal" selected>Internal (Full-time employees)</option>
+                <option value="Confidential">Confidential (Management & Leads)</option>
+                <option value="HR-Restricted">HR-Restricted (HR & People Ops)</option>
+                <option value="Finance-Restricted">Finance-Restricted (Finance & Controllers)</option>
+                <option value="Executive-Eyes-Only">Executive-Eyes-Only (C-Suite & Board)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Search Tags (Comma separated)</label>
+              <input type="text" class="form-control" id="ingestDocTags" placeholder="metrics, datadog, tracing">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Document Content (Markdown supported)</label>
+            <textarea class="form-control" id="ingestDocContent" rows="6" placeholder="### 1. Section Title&#10;Detailed operational guidelines..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btnCancelIngest">Cancel</button>
+          <button type="submit" class="btn-primary">Index & Embed Document</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       Global Enterprise Search & Command Palette Modal
+       ======================================================================= -->
+  <div class="modal-backdrop" id="globalSearchModal">
+    <div class="search-palette-box">
+      <div class="palette-input-wrapper">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-600)" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="palette-input" id="paletteSearchInput" placeholder="Search company knowledge, policies, agent workflows, or navigate..." autocomplete="off">
+        <button class="palette-esc-badge" id="btnClosePalette">ESC</button>
+      </div>
+
+      <!-- Quick Filter Categories -->
+      <div class="palette-filters" role="tablist" aria-label="Search filter categories">
+        <button type="button" class="palette-filter-chip active" data-filter="all">All Results</button>
+        <button type="button" class="palette-filter-chip" data-filter="docs">Knowledge Docs <span class="chip-count">(<span id="paletteDocsCount">28</span>)</span></button>
+        <button type="button" class="palette-filter-chip" data-filter="workflows">Agent Workflows <span class="chip-count">(5)</span></button>
+        <button type="button" class="palette-filter-chip" data-filter="navigation">Navigation</button>
+      </div>
+
+      <!-- Search Results List -->
+      <div class="palette-results-container" id="paletteResults">
+        <!-- Dynamically rendered items -->
+      </div>
+
+      <div class="palette-footer">
+        <div class="palette-hint">
+          <span><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+          <span><kbd>↵</kbd> to select</span>
+          <span><kbd>ESC</kbd> to close</span>
+        </div>
+        <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+          <span style="display: inline-block; width: 6px; height: 6px; background: var(--emerald-600); border-radius: 50%;"></span>
+          <span>Instant Enterprise Index</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/rag.js"></script>
+  <script src="js/agents.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
